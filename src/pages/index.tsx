@@ -4,7 +4,9 @@ import Layout from "../components/Layout";
 import styles from "../styles/Home.module.css";
 import Table from "../components/Table";
 import Client from "../core/Client";
-
+import Button from "../components/Button";
+import Form from "../components/Form";
+import { useState } from "react";
 const clients = [
   new Client("Ana", 34, "1"),
   new Client("Maria", 25, "2"),
@@ -21,6 +23,12 @@ function clientDeleted(client: Client) {
 }
 
 export default function Home() {
+  const [show, setShow] = useState<"table" | "form">("table");
+
+  function saveClient(client: Client) {
+    console.log(client);
+    setShow('table')
+  }
   return (
     <div
       className={`
@@ -30,11 +38,30 @@ export default function Home() {
       `}
     >
       <Layout title="Cadastro Simples">
-        <Table
-          clients={clients}
-          clientSelect={clientSelect}
-          clientDeleted={clientDeleted}
-        ></Table>
+        {show === "table" ? (
+          <>
+            <div className="flex justify-end">
+              <Button
+                onClick={() => setShow("form")}
+                className="mb-4"
+                color="blue"
+              >
+                Novo Cliente
+              </Button>
+            </div>
+            <Table
+              clients={clients}
+              clientSelect={clientSelect}
+              clientDeleted={clientDeleted}
+            />
+          </>
+        ) : (
+          <Form
+            client={clients[0]}
+            clientChange={saveClient}
+            cancel={() => setShow("table")}
+          />
+        )}
       </Layout>
     </div>
   );
